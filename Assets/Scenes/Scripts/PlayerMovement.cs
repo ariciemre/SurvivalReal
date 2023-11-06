@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpHeight = 3f;
 
     public Transform groundCheck;
-    public float groundDistance = 1.8f; // Adjust this value for your character's size
+    public float groundDistance = 1.0f; // Adjust this value for your character's size
     public LayerMask groundMask;
 
     Vector3 velocity;
