@@ -4,16 +4,32 @@ using UnityEngine;
 
 public class InteractableObject : MonoBehaviour
 {
+
     public string ItemName;
 
     public bool playerInRange;
 
+     void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Mouse0) && playerInRange && SelectionManager.Instance.onTarget)
+        {
+            if (!InventorySystem.Instance.CheckifFull())
+            {
+
+                InventorySystem.Instance.AddToInventory(ItemName);
+                Destroy(gameObject);
+            }
+            else
+            {
+                Debug.Log("Inventory is full");
+            }
+        }
+    }
 
 
 
 
-
-   public string GetItemName()
+    public string GetItemName()
     {
         return ItemName;
     }
