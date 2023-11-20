@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.UI;
+using TMPro;
 
 public class InventorySystem : MonoBehaviour
 {
@@ -19,6 +21,13 @@ public class InventorySystem : MonoBehaviour
     private GameObject whatSlotToEquip;
 
     //public bool isFull;
+
+
+    // Pickup Pop Up
+
+    public GameObject pickupAlert;
+    public TextMeshProUGUI pickupName;
+    public UnityEngine.UI.Image pickupImage;
 
     private void Awake()
     {
@@ -67,7 +76,10 @@ public class InventorySystem : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.I) && isOpen)
         {
             inventoryScreenUI.SetActive(false);
-            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+            if (!CraftingSystem.Instance.isOpen)
+            {
+                UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+            }
             isOpen = false;
             
         }
@@ -83,6 +95,32 @@ public class InventorySystem : MonoBehaviour
 
             itemList.Add(itemName);
 
+            Sprite sprite = itemToAdd.GetComponent<UnityEngine.UI.Image>().sprite;
+
+            TriggerPickupPopUp(itemName, sprite);
+
+
+
+
+
+            ReCalculateList();
+            CraftingSystem.Instance.RefreshNeededItems();
+
+    }
+
+    void TriggerPickupPopUp(string itemName,Sprite itemSprite)
+    {
+        pickupAlert.SetActive(true);
+
+        pickupName.text = itemName;
+        pickupImage.sprite = itemSprite;
+        StartCoroutine(DisplayPickup());
+
+    }
+    IEnumerator DisplayPickup ()
+    {
+        yield return new WaitForSeconds(2f);
+        pickupAlert.SetActive(false);
     }
 
     private GameObject FindNextEmptySlot()
@@ -117,6 +155,48 @@ public class InventorySystem : MonoBehaviour
         else
         {
             return false;
+        }
+    }
+
+
+
+    public void RemoveItem(string nameToRemove ,int amountToRemove)
+    {
+
+        int counter = amountToRemove;
+
+        for(var i =slotList.Count -1;i>=0;i--)
+        {
+            if (slotList[i].transform.childCount>0)
+            {
+                if (slotList[i].transform.GetChild(0).name == nameToRemove +"(Clone)" && counter !=0)
+                {
+                    Destroy(slotList[i].transform.GetChild(0).gameObject);
+                    counter -= 1;
+
+                }
+            }
+        }
+        ReCalculateList();
+        CraftingSystem.Instance.RefreshNeededItems();
+    }
+    public void ReCalculateList()
+    {
+        itemList.Clear();   
+
+        foreach(GameObject slot in slotList )
+        {
+            if(slot.transform.childCount > 0)
+            {
+
+                string name = slot.transform.GetChild(0).name;
+
+                string str2 = "(Clone)";
+
+                string result = name.Replace(str2, "");
+
+                itemList.Add(result);
+            }
         }
     }
 

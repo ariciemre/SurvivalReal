@@ -12,9 +12,15 @@ public class SelectionManager : MonoBehaviour
 
     public bool onTarget = false;
 
+    public GameObject selectedObject;
+
     public GameObject interaction_Info_UI;
     TextMeshProUGUI interaction_text;
 
+
+
+    public Image centerDotImage;
+    public Image handIcon;
 
     private void Start()
     {
@@ -45,14 +51,29 @@ public class SelectionManager : MonoBehaviour
             if (ourInteractable && ourInteractable.playerInRange)
             {
                 onTarget = true;
+                selectedObject = ourInteractable.gameObject;
                 interaction_text.text = ourInteractable.GetItemName();
                 interaction_Info_UI.SetActive(true);
+
+                if(ourInteractable.CompareTag("pickable"))
+                {
+                    centerDotImage.gameObject.SetActive(false);
+                    handIcon.gameObject.SetActive(true);
+                }
+                else
+                {
+                    handIcon.gameObject.SetActive(false);
+                    centerDotImage.gameObject.SetActive(true);
+                }
+
                 
             }
             else
             {
                 onTarget = false;
                 interaction_Info_UI.SetActive(false);
+                handIcon.gameObject.SetActive(false);
+                centerDotImage.gameObject.SetActive(true);
             }
 
         }
@@ -60,6 +81,8 @@ public class SelectionManager : MonoBehaviour
         {
             onTarget = false;
             interaction_Info_UI.SetActive(false);
+            handIcon.gameObject.SetActive(false);
+            centerDotImage.gameObject.SetActive(true);
         }
     }
 }
