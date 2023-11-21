@@ -9,6 +9,7 @@ using TMPro;
 public class InventorySystem : MonoBehaviour
 {
 
+    public GameObject ItemInfoUI;
     public static InventorySystem Instance { get; set; } //singleton
 
     public GameObject inventoryScreenUI;
@@ -44,6 +45,8 @@ public class InventorySystem : MonoBehaviour
 
     void Start()
     {
+        
+
         isOpen = false;
         PopulateSlotList();
     }
@@ -62,6 +65,10 @@ public class InventorySystem : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            Debug.Log(slotList);
+        }
 
         if (Input.GetKeyDown(KeyCode.I) && !isOpen)
         {
@@ -86,26 +93,24 @@ public class InventorySystem : MonoBehaviour
     }
     public void AddToInventory(string itemName)
     {
-       
-            Debug.Log("Inventory is full");
         
+            
             whatSlotToEquip = FindNextEmptySlot();
+        Debug.Log(whatSlotToEquip);
+            
+
             itemToAdd = (GameObject)Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
             itemToAdd.transform.SetParent(whatSlotToEquip.transform);
-
-            itemList.Add(itemName);
+            itemList.Add(itemName);   
 
             Sprite sprite = itemToAdd.GetComponent<UnityEngine.UI.Image>().sprite;
 
             TriggerPickupPopUp(itemName, sprite);
 
 
-
-
-
             ReCalculateList();
             CraftingSystem.Instance.RefreshNeededItems();
-
+        
     }
 
     void TriggerPickupPopUp(string itemName,Sprite itemSprite)
@@ -123,7 +128,7 @@ public class InventorySystem : MonoBehaviour
         pickupAlert.SetActive(false);
     }
 
-    private GameObject FindNextEmptySlot()
+    public GameObject FindNextEmptySlot()
     {
         foreach (GameObject slot in slotList)
         {
@@ -131,6 +136,7 @@ public class InventorySystem : MonoBehaviour
             {
                 return slot;
             }
+            
         }
         return new GameObject();
     }
